@@ -27,7 +27,7 @@ function App() {
       <h1>Free Board</h1>
       <div className='board-list'>
         {viewList.map((element) => 
-          <div key={element}>
+          <div style={{ border: '1px solid #333' }} key={element}>
             <h2>{element.title}</h2>
             <div>{ReactHtmlParser(element.content)}</div>
           </div>
