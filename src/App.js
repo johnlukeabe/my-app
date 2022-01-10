@@ -1,20 +1,43 @@
 import React from 'react';
+import { useState } from 'react';
 import './App.css';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import ReactHtmlParser from 'react-html-parser';
 
 function App() {
+  const [post, setPost] = useState({
+    title: '',
+    content: ''
+  })
+
+  const getValue = e => {
+    const { name, value } = e.target;
+    setPost({
+      ...post,
+      [name]: value
+    })
+    console.log(post);
+  }
+
+  const [viewList, setViewList] = useState([]);
+
   return (
     <div className="App">
       <h1>Free Board</h1>
       <div className='board-list'>
-        <h2>Title</h2>
-        <div>
-          Contents
-        </div>
+        {viewList.map((element) => 
+          <div key={element}>
+            <h2>{element.title}</h2>
+            <div>{ReactHtmlParser(element.content)}</div>
+          </div>
+        )}
       </div>
       <div className='form-wrapper'>
-        <input className="title-input" type='text' placeholder='제목' />
+        <input className="title-input" type='text' placeholder='제목'
+                onChange={getValue}
+                name='title'
+        />
         <CKEditor
           editor={ClassicEditor}
           data=""
@@ -25,6 +48,11 @@ function App() {
           onChange={(event, editor) => {
             const data = editor.getData();
             console.log({ event, editor, data });
+            setPost({
+              ...post,
+              content: data
+            })
+            console.log(post);
           }}
           onBlur={(event, editor) => {
             console.log('Blur.', editor);
@@ -34,7 +62,12 @@ function App() {
           }}
         />
       </div>
-      <button className='submit-button'>Submit</button>
+      <button className='submit-button'
+        onClick={() => {
+          setViewList(viewList.concat({...post}));
+        }}
+        >Submit
+      </button>
     </div>
   );
 }
